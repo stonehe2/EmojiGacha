@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<!-- 
+  EmojiGacha - 主页面
+  一个基于 Unicode Emoji 的桌面宠物抽卡游戏
+  页面结构包含：顶部导航、桌宠展示、抽卡按钮、图鉴网格、设置弹窗
+-->
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EmojiGacha</title>
+  <!-- Google Fonts - 使用三种字体：标题、正文、数字 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700&family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <!-- 项目样式表 -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- 主容器 - 包含所有可见内容 -->
+  <div class="container">
+    <!-- ========== 顶部导航栏 ========== -->
+    <!-- 显示当前桌宠信息和星尘数量 -->
+    <header class="main-header">
+      <!-- 左侧：桌宠 Emoji 和名称 -->
+      <div class="header-left">
+        <span class="header-pet-emoji" id="headerPetEmoji">😀</span>
+        <span class="header-pet-name" id="headerPetName">grinning face</span>
+      </div>
+      <!-- 右侧：星尘显示区 + 设置按钮 -->
+      <div class="header-right">
+        <div class="coin-display">
+          <div class="coin-icon">✨</div>
+          <span class="coin-amount" id="coinAmount">0</span>
+        </div>
+        <button class="header-settings-btn" id="settingsBtn" aria-label="数据管理">⚙️</button>
+      </div>
+    </header>
+
+    <!-- ========== 桌宠展示区域 ========== -->
+    <!-- 包含可点击的 Emoji 宠物和信息面板 -->
+    <div class="pet-display-section">
+      <!-- 桌宠容器 - 点击获得星尘 -->
+      <div class="pet-container" id="petContainer">
+        <div class="pet-emoji" id="petEmoji">😀</div>
+        <div class="click-hint" id="clickHint">点击获得星尘</div>
+      </div>
+      <!-- 桌宠信息面板 -->
+      <div class="pet-info-panel">
+        <div class="pet-info-row">
+          <div class="pet-info-item">
+            <span class="pet-info-label">⭐ 稀有度</span>
+            <span class="pet-info-value" id="activePetRarity">1★</span>
+          </div>
+          <div class="pet-info-item">
+            <span class="pet-info-label">📦 持有</span>
+            <span class="pet-info-value" id="activePetOwned">x1</span>
+          </div>
+          <div class="pet-info-item">
+            <span class="pet-info-label">💰 收益</span>
+            <span class="pet-info-value income-value" id="activePetRate">0.1 / 秒</span>
+          </div>
+        </div>
+      </div>
+      <!-- 浮动星尘动画容器 -->
+      <div class="floating-coins" id="floatingCoins"></div>
+    </div>
+
+    <!-- ========== 抽卡按钮区域 ========== -->
+    <!-- 单抽和十连抽按钮 -->
+    <div class="gacha-section">
+      <button class="gacha-btn single" id="singleGacha">
+        单抽
+        <span>10 ✨</span>
+      </button>
+      <button class="gacha-btn multi" id="multiGacha">
+        十连抽
+        <span>90 ✨</span>
+      </button>
+    </div>
+
+    <!-- ========== 图鉴区域 ========== -->
+    <!-- 显示所有收集到的 Emoji 宠物，支持系列和稀有度筛选 -->
+    <div class="collection-section">
+      <!-- 图鉴头部 - 标题和收集进度 -->
+      <div class="collection-header">
+        <div class="collection-title">Emoji 图鉴</div>
+        <div class="collection-stats">
+          <span class="collection-progress" id="collectionProgress">0 / 0</span>
+        </div>
+      </div>
+      <!-- 收集进度条 -->
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <!-- 筛选区域：全部和收起按钮在第一行，标签在第二行可自动换行 -->
+      <div class="collection-filters">
+        <div class="filter-row-top">
+          <button class="filter-all-btn active" id="filterAllBtn">全部</button>
+          <button class="collection-toggle-btn" id="collectionToggleBtn" title="收起/展开图鉴">
+            <span id="collectionToggleIcon">▼</span>
+          </button>
+        </div>
+        <div class="filter-tags-wrapper">
+          <div class="rarity-tabs" id="rarityTabs"></div>
+          <div class="series-tabs" id="seriesTabs"></div>
+        </div>
+      </div>
+      <!-- 宠物卡片网格 - 动态生成的宠物列表 -->
+      <div class="collection-grid-wrapper">
+        <div class="collection-grid" id="collectionGrid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 抽卡结果弹窗 ========== -->
+  <!-- 展示抽卡结果，包含翻转卡片动画和十连抽网格视图 -->
+  <!-- 结构层级：
+       gacha-overlay (遮罩层)
+         └─ gacha-result-wrapper (内容容器)
+              ├─ gacha-card-container (卡片容器，会被 innerHTML 重置)
+              │    ├─ gacha-card (单抽翻转卡片)
+              │    └─ setPetBtn (设为桌宠按钮)
+              ├─ continueGachaBtns (继续抽卡按钮，在容器外部避免被清空)
+              └─ close-hint (关闭提示)
+  -->
+  <div class="gacha-overlay" id="gachaOverlay">
+    <div class="gacha-result-wrapper">
+      <div class="gacha-card-container" id="gachaCardContainer">
+        <!-- 单抽翻转卡片 -->
+        <div class="gacha-card" id="gachaCard">
+          <div class="gacha-card-inner">
+            <!-- 卡片正面 - 等待揭晓状态 -->
+            <div class="gacha-card-front">
+              <div class="gacha-card-front-content">
+                <div class="gacha-card-front-star">⭐</div>
+                <span>Unicode Emoji 揭晓中</span>
+              </div>
+            </div>
+            <!-- 卡片背面 - 结果展示 -->
+            <div class="gacha-card-back" id="gachaCardBack">
+              <div class="gacha-card-emoji" id="gachaEmoji">😀</div>
+              <div class="gacha-card-name" id="gachaName">grinning face</div>
+              <div class="gacha-card-rarity" id="gachaRarity">1</div>
+              <div class="gacha-card-desc" id="gachaDesc">编号 #1
+代码 U+1F600
+系列 表情 / face-smiling
+基础产出 0.0 / 秒</div>
+              <div class="gacha-card-note" id="gachaNote">新伙伴加入收藏！</div>
+            </div>
+          </div>
+        </div>
+        <!-- 设为桌宠按钮 -->
+        <button class="set-pet-btn" id="setPetBtn">设为桌宠</button>
+      </div>
+      <!-- 继续抽卡按钮区域（在容器外部，不会被清空） -->
+      <div class="continue-gacha-btns" id="continueGachaBtns">
+        <button class="continue-btn single" id="continueSingleBtn"></button>
+        <button class="continue-btn multi" id="continueMultiBtn"></button>
+      </div>
+      <div class="close-hint">点击空白处关闭</div>
+    </div>
+  </div>
+
+  <!-- ========== 设置弹窗 ========== -->
+  <!-- 数据管理界面：导出、导入、重置 -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-content">
+      <!-- 弹窗头部 - 标题和关闭按钮 -->
+      <div class="modal-header">
+        <h2 class="modal-title">⚙️ 数据管理</h2>
+        <button class="modal-close" id="closeSettingsBtn">✕</button>
+      </div>
+      <!-- 导出数据区块 -->
+      <div class="modal-section">
+        <div class="modal-section-title">📤 导出数据</div>
+        <button class="modal-btn primary" id="exportBtn">
+          导出游戏备份
+        </button>
+        <p class="modal-note">下载包含所有游戏进度（星尘、收藏、当前桌宠）的 JSON 文件</p>
+      </div>
+      <!-- 导入数据区块 -->
+      <div class="modal-section">
+        <div class="modal-section-title">📥 导入数据</div>
+        <div class="file-input-wrapper">
+          <button class="modal-btn secondary" id="importBtn">
+            选择备份文件
+          </button>
+          <input type="file" id="importFileInput" accept=".json">
+        </div>
+        <!-- 导入预览 - 显示备份文件内容 -->
+        <div class="import-preview" id="importPreview" style="display: none;">
+          <div class="import-preview-item">
+            <span>星尘数量</span>
+            <span class="import-preview-value" id="previewCoins">-</span>
+          </div>
+          <div class="import-preview-item">
+            <span>收藏数量</span>
+            <span class="import-preview-value" id="previewOwned">-</span>
+          </div>
+          <div class="import-preview-item">
+            <span>当前桌宠</span>
+            <span class="import-preview-value" id="previewActivePet">-</span>
+          </div>
+        </div>
+        <p class="modal-note">导入后当前游戏数据将被覆盖，请确认后操作</p>
+      </div>
+      <!-- 危险操作区块 -->
+      <div class="modal-section">
+        <div class="modal-section-title">⚠️ 危险操作</div>
+        <button class="modal-btn danger" id="resetBtn">
+          重置所有数据
+        </button>
+        <p class="modal-note">清除所有游戏进度，此操作不可恢复！</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 脚本加载 ========== -->
+  <!-- 先加载数据文件，再加载游戏逻辑 -->
+  <script src="data.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>
