@@ -1636,9 +1636,9 @@ body {
 /* --- 里程碑达成横幅 --- */
 .milestone-banner {
   position: fixed;
-  top: -80px;
+  top: 20px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(-50%) translateY(-120px);
   z-index: 4000;
   display: flex;
   align-items: center;
@@ -1648,12 +1648,12 @@ body {
   border: 2px solid #FBBF24;
   border-radius: 16px;
   box-shadow: 0 0 40px rgba(251, 191, 36, 0.3);
-  transition: top 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   pointer-events: none;
 }
 
 .milestone-banner.show {
-  top: 20px;
+  transform: translateX(-50%) translateY(0);
 }
 
 .milestone-banner-icon {
@@ -1798,6 +1798,9 @@ body {
     animation: none !important;
   }
   .milestone-progress-bar {
+    transition: none !important;
+  }
+  .milestone-banner {
     transition: none !important;
   }
   .progress-bar {
