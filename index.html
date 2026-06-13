@@ -45,7 +45,7 @@
         <div class="pet-emoji" id="petEmoji">😀</div>
         <div class="click-hint" id="clickHint">点击获得星尘</div>
       </div>
-      <!-- 桌宠信息面板 -->
+      <!-- 桌宠信息面板（v2.0：四列，增加点击收益） -->
       <div class="pet-info-panel">
         <div class="pet-info-row">
           <div class="pet-info-item">
@@ -57,8 +57,12 @@
             <span class="pet-info-value" id="activePetOwned">x1</span>
           </div>
           <div class="pet-info-item">
-            <span class="pet-info-label">💰 收益</span>
+            <span class="pet-info-label">💰 被动</span>
             <span class="pet-info-value income-value" id="activePetRate">0.1 / 秒</span>
+          </div>
+          <div class="pet-info-item">
+            <span class="pet-info-label">👆 点击</span>
+            <span class="pet-info-value click-value" id="activePetClick">+1</span>
           </div>
         </div>
       </div>
@@ -81,7 +85,7 @@
 
     <!-- ========== 图鉴区域 ========== -->
     <!-- 显示所有收集到的 Emoji 宠物，支持系列和稀有度筛选 -->
-    <div class="collection-section">
+    <div class="collection-section" id="collectionSection">
       <!-- 图鉴头部 - 标题和收集进度 -->
       <div class="collection-header">
         <div class="collection-title">Emoji 图鉴</div>
@@ -92,6 +96,15 @@
       <!-- 收集进度条 -->
       <div class="progress-bar-container">
         <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <!-- v2.0 里程碑进度条 -->
+      <div class="milestone-progress-section">
+        <div class="milestone-progress-header">
+          <span class="milestone-progress-label" id="milestoneProgressLabel">0 / 10 → 下一个里程碑</span>
+        </div>
+        <div class="milestone-progress-bar-container">
+          <div class="milestone-progress-bar" id="milestoneProgressBar"></div>
+        </div>
       </div>
       <!-- 筛选区域：全部和收起按钮在第一行，标签在第二行可自动换行 -->
       <div class="collection-filters">
@@ -111,6 +124,19 @@
         <div class="collection-grid" id="collectionGrid"></div>
       </div>
     </div>
+  </div>
+
+  <!-- ========== v2.0 里程碑达成横幅 ========== -->
+  <div class="milestone-banner" id="milestoneBanner">
+    <span class="milestone-banner-icon" id="milestoneIcon">🎉</span>
+    <span class="milestone-banner-title" id="milestoneTitle">收藏新手</span>
+    <span class="milestone-banner-text" id="milestoneReward">收集了 10 种宠物！获得 50 ✨ 奖励</span>
+  </div>
+
+  <!-- ========== v2.0 新手引导气泡 ========== -->
+  <div class="onboarding-tooltip" id="onboardingTooltip">
+    <div class="onboarding-arrow"></div>
+    <span class="onboarding-text" id="onboardingText">点击宠物获得星尘！</span>
   </div>
 
   <!-- ========== 抽卡结果弹窗 ========== -->
