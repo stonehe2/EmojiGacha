@@ -283,20 +283,20 @@ body {
   50% { transform: translateY(-6px); opacity: 1; }
 }
 
-/* 信息面板 */
+/* 信息面板（v2.0：增加最大宽度以容纳四列） */
 .pet-info-panel {
   display: flex;
   flex-direction: column;
   gap: 8px;
   margin-top: 16px;
   width: 100%;
-  max-width: 360px;
+  max-width: 480px;
 }
 
-/* 信息行（三列横排） */
+/* 信息行（四列横排，v2.0：增加点击收益） */
 .pet-info-row {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 8px;
 }
 
@@ -1132,6 +1132,19 @@ body {
   50% { box-shadow: 0 0 145px rgba(244, 63, 94, 0.95); }
 }
 
+/* v2.0：补齐 8 星卡片背面（最高稀有度专属动画） */
+.gacha-card-back.rarity-8 {
+  background: linear-gradient(135deg, #EF4444 0%, #B91C1C 50%, #7F1D1D 100%);
+  border-color: #EF4444;
+  box-shadow: 0 0 150px rgba(239, 68, 68, 0.85);
+  animation: urCardGlowMax 1.5s ease-in-out infinite;
+}
+
+@keyframes urCardGlowMax {
+  0%, 100% { box-shadow: 0 0 100px rgba(239, 68, 68, 0.65); }
+  50% { box-shadow: 0 0 170px rgba(239, 68, 68, 1); }
+}
+
 /* 卡片内容 */
 .gacha-card-emoji {
   font-size: 116px;
@@ -1553,4 +1566,257 @@ body {
     font-size: 10px;
     min-height: 24px;
   }
+
+  .pet-info-row {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* ==========================================
+   v2.0 新增样式
+   ========================================== */
+
+/* --- 十连抽摘要横幅 --- */
+.gacha-summary {
+  text-align: center;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  font-size: 17px;
+  color: #e2e8f0;
+  animation: summarySlideIn 0.4s ease;
+}
+
+.gacha-summary-new {
+  color: #FBBF24;
+  font-weight: 700;
+  margin-left: 6px;
+}
+
+@keyframes summarySlideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 十连抽网格卡片交错的淡入动画 */
+.gacha-grid-container .gacha-grid-card {
+  animation: gridCardFadeIn 0.4s ease both;
+}
+
+@keyframes gridCardFadeIn {
+  from { opacity: 0; transform: scale(0.85); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* 新宠物卡片高亮 */
+.gacha-grid-card.new-card {
+  border-color: #FBBF24 !important;
+  box-shadow: 0 0 20px rgba(251, 191, 36, 0.4);
+}
+
+.gacha-grid-badge.new {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: #FBBF24;
+  color: #1e293b;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 6px;
+  animation: badgePulse 1.5s ease-in-out infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+/* --- 里程碑达成横幅 --- */
+.milestone-banner {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-120px);
+  z-index: 4000;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 28px;
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  border: 2px solid #FBBF24;
+  border-radius: 16px;
+  box-shadow: 0 0 40px rgba(251, 191, 36, 0.3);
+  transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: none;
+}
+
+.milestone-banner.show {
+  transform: translateX(-50%) translateY(0);
+}
+
+.milestone-banner-icon {
+  font-size: 32px;
+}
+
+.milestone-banner-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  color: #FBBF24;
+}
+
+.milestone-banner-text {
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+/* --- 里程碑进度条 --- */
+.milestone-progress-section {
+  margin-top: 8px;
+  padding: 8px 0;
+}
+
+.milestone-progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.milestone-progress-label {
+  font-size: 13px;
+  color: var(--color-muted);
+}
+
+.milestone-progress-bar-container {
+  width: 100%;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.milestone-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, #38BDF8 0%, #FBBF24 100%);
+  border-radius: 999px;
+  transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+  width: 0%;
+}
+
+/* --- 新手引导气泡 --- */
+.onboarding-tooltip {
+  position: fixed;
+  z-index: 5000;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, -100%) scale(0.9);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  max-width: 240px;
+  white-space: nowrap;
+}
+
+.onboarding-tooltip.show {
+  opacity: 1;
+  transform: translate(-50%, -100%) scale(1);
+}
+
+.onboarding-arrow {
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid var(--color-primary);
+  margin: 0 auto -2px;
+}
+
+.onboarding-text {
+  display: block;
+  padding: 10px 16px;
+  background: var(--color-primary);
+  color: #fff;
+  font-family: var(--font-display);
+  font-size: 15px;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(147, 112, 219, 0.45);
+  text-align: center;
+}
+
+/* 引导中高亮的目标元素 */
+.onboarding-highlight {
+  position: relative;
+  z-index: 4999 !important;
+  box-shadow: 0 0 0 9999px rgba(2, 6, 23, 0.7), 0 0 24px rgba(251, 191, 36, 0.6) !important;
+  border-color: #FBBF24 !important;
+}
+
+/* --- 点击收益值样式 --- */
+.pet-info-value.click-value {
+  color: var(--color-accent);
+}
+
+/* --- 可访问性：reduced motion --- */
+@media (prefers-reduced-motion: reduce) {
+  .pet-emoji,
+  .pet-emoji.clicked {
+    animation: none !important;
+  }
+  .pet-emoji:active {
+    transform: none;
+  }
+  .click-hint {
+    animation: none !important;
+  }
+  .coin-icon {
+    animation: none !important;
+  }
+  .gacha-card-back.rarity-7,
+  .gacha-card-back.rarity-8,
+  .gacha-card.rarity-7,
+  .gacha-card.rarity-8 {
+    animation: none !important;
+  }
+  .gacha-card-emoji {
+    animation: none !important;
+  }
+  .floating-coin {
+    animation: none !important;
+  }
+  .gacha-card-inner {
+    transition: transform 0s !important;
+  }
+  .gacha-grid-card {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .onboarding-tooltip {
+    transition: none !important;
+  }
+  .gacha-grid-badge.new {
+    animation: none !important;
+  }
+  .milestone-progress-bar {
+    transition: none !important;
+  }
+  .milestone-banner {
+    transition: none !important;
+  }
+  .progress-bar {
+    transition: none !important;
+  }
+}
+
+/* --- 键盘焦点可见性（可访问性） --- */
+.gacha-btn:focus-visible,
+.filter-all-btn:focus-visible,
+.series-tab:focus-visible,
+.rarity-tab:focus-visible,
+.collection-toggle-btn:focus-visible,
+.set-pet-btn:focus-visible,
+.continue-btn:focus-visible,
+.modal-btn:focus-visible {
+  outline: 3px solid #FBBF24;
+  outline-offset: 2px;
 }
